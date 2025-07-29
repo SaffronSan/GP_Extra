@@ -1,4 +1,4 @@
-const a2V5 = "UldVWkV2RE9uaTNBMThpUlgyVjlYUTRKYmxyM1RBa2Y=", c2VjcmV0 = "VnJ2SzJvazQyb05KYWtYcw=="
+const a2V5 = "UldVWkV2RE9uaTNBMThpUlgyVjlYUTRKYmxyM1RBa2Y=", c2VjcmV0 = "VnJ2SzJvazQyb05KYWtYcw==", d2VhdGhlcg = "NGIwMDZjNjY0OTY1NGYyZjk4YzE4MzQxODI1MjkwNw==";
 export function ZW5jb2RlU3RyaW5n(c3Ry) {
   const YmluYXJ5U3Ry = Array.from(c3Ry)
     .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
@@ -40,4 +40,10 @@ export async function Z2V0QWNjZXNzVG9rZW4() {
   });
   const data = await res.json();
   return data.access_token;
+}
+
+export async function Z2V0Q2l0eVdlYXRoZXI(city) {
+  const res = await fetch(`http://api.weatherapi.com/v1/current.json?&key=${ZGVjb2RlU3RyaW5n(d2VhdGhlcg)}&q=${city}`);
+  const data = await res.json();
+  return data.current;
 }

@@ -1,9 +1,9 @@
 <section class=" bg-[#0e2525]/80 text-white flex-grow">
-    <div class="p-5 xl:p-20">
-        <div
-            class="md:mx-auto w-full xl:w-3/5 bg-[#0e2525] flex justify-around border-2 shadow-sm border-primary rounded-full p-1">
+    <div class="p-5 xl:p-20 text-center">
+        <h1 class="xl:text-3xl xl:p-5 :py-5 text-xl font-black">Find Hotels in our Cities</h1>
+        <div class="md:mx-auto w-full xl:w-3/5 bg-[#0e2525] flex justify-around border-2 shadow-sm border-primary rounded-full p-2">
             <select class="" id="city-opts"></select>
-            <button class="cursor-pointer border-1 text-white rounded-xl px-2" id="searchCity">Search</button>
+            <button class="cursor-pointer border-1 text-white rounded-xl px-2 hover:bg-white hover:text-primary" id="searchCity">Search</button>
         </div>
     </div>
     <div id="loader" class="hidden flex items-center justify-center">
@@ -11,6 +11,12 @@
     </div>
     <div class="grid grid-cols-1 p-2 md:grid-cols-2 xl:grid-cols-3 mx-5 mt-2 text-white *:rounded-xl *:bg-primary/50 text-center *:shadow-sm *:p-2 gap-5"
         id="data-render">
+    </div>
+    <div class="xl:text-3xl xl:p-5 :py-5 text-xl font-black text-center" id="weather-cont">
+        <h2 class="my-2">The weather in <span id="we-city"></span> is!</h2>
+        <div class="" id="weather-render">
+
+        </div>
     </div>
 </section>
 <script src="/routerHandle.js"></script>

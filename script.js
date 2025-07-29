@@ -1,4 +1,4 @@
-import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
+import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
 (function () {
     const pagesData = [];
     let cities = [], isPopState = false, packages = [],
@@ -9,7 +9,8 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
                 "search": [], "raw": []
             },
             "tnks": "",
-            "lastCity": ""
+            "lastCity": "",
+            "weather": {}
         }
 
     /**
@@ -116,10 +117,13 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
         }
         if (page.includes("hotel")) {
             desLinkBuilder(cities, "#city-opts", false);
-            console.log(reHistory)
             if (reHistory.citySearch.raw.length > 0) {
-                console.log(reHistory.citySearch.search.length-1);
-                serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.length-1], "#data-render");
+                $("#city-opts").val(reHistory.lastCity)
+                serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.length - 1], "#data-render", true);
+                $("#we-city").text(cities.find((item) => item.cityCode.includes(reHistory.lastCity)).cityName)
+            }
+            if (reHistory.weather) {
+                weatherBuilder(reHistory.weather)
             }
             $("#searchCity").click((e) => {
                 searchCity($("#city-opts").val());
@@ -197,7 +201,6 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
             }
             if (!image) {
                 container.val(item.cityCode)
-                //console.log(container.val(item.cityCode)); 
             }
             container.append(btn);
             $(place).append(container);
@@ -254,17 +257,77 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
         });
         attachLinkBtnHandlers();
     }
-    function serviceBuilder(data, place) {
+    function weatherBuilder(weather) {
+        $("#weather-render").empty();
+        // Create main card container
+        const card = $("<div/>")
+            .addClass("max-w-sm mx-auto bg-primary/70 rounded-xl shadow-md overflow-hidden p-4");
+
+        // Weather icon
+        const iconUrl = weather.condition && weather.condition.icon
+            ? `https:${weather.condition.icon}`
+            : "";
+        const icon = $("<img/>")
+            .attr("src", iconUrl)
+            .attr("alt", "Weather Icon")
+            .addClass("w-16 h-16 mx-auto");
+
+
+        // Temperature
+        const tempC = weather.temp_f !== undefined ? weather.temp_c : "N/A";
+        const temperature = $("<p/>")
+            .text(`Temperature: ${tempC}°C`)
+            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
+
+        // Condition text
+        const conditionText = weather.condition && weather.condition.text ? weather.condition.text : "N/A";
+        const condition = $("<p/>")
+            .text(`Condition: ${conditionText}`)
+            .addClass("xl:text-2xl xl:p-2  text-xl font-black text-center");
+
+        // Wind info
+        const wind = weather.wind_kph !== undefined ? weather.wind_kph + " kph" : "N/A";
+        const windDir = weather.wind_dir || "";
+        const windInfo = $("<p/>")
+            .text(`Wind: ${wind} ${windDir}`)
+            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
+
+        // Humidity
+        const humidity = weather.humidity !== undefined ? weather.humidity + "%" : "N/A";
+        const humidityEl = $("<p/>")
+            .text(`Humidity: ${humidity}`)
+            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
+
+        // Additional info can be added similarly...
+
+        // Assemble the card
+        card.append(icon, location, temperature, condition, windInfo, humidityEl);
+
+        // Append to container
+        localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
+        $("#weather-render").append(card);
+    }
+    /**
+     * Renders the cities also can force wait for a second
+     * @param {Object} data 
+     * @param {String} place 
+     * @param {Boolean} renderAgain 
+     * @returns 
+     */
+    function serviceBuilder(data, place, renderAgain = false) {
         const loader = document.getElementById('loader');
         $(place).empty()
-        console.log(data)
         if (data.hasOwnProperty("errors")) {
             errorServiceBuilder(data.errors[0]);
             return;
         }
-        $("#loader").removeClass("hidden")
+        if (renderAgain) {
+            $("#loader").removeClass("hidden")
+        }
         setTimeout(() => {
-            $("#loader").addClass("hidden")
+            if (renderAgain) {
+                $("#loader").addClass("hidden")
+            }
             data.data.forEach((item, index) => {
                 if (index >= 21) {
                     return;
@@ -274,27 +337,66 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
                     hotelName = $("<h3/>").addClass("lowercase first-letter:uppercase font-bold md:text-xl w-fit text-wrap mx-auto").text(item.name),
                     hotelAddress = $("<span/>").addClass("lowercase first-letter:uppercase").text(item.address.lines[0]),
                     hotelPostal = $("<p/>").text("Postal Code: " + item.address.postalCode).addClass(""),
-                    learnMoreBtn = $("<button/>").addClass("bg-[#0e2525] text-white rounded-xl px-2 py-1 w-fit mx-auto").text("Learn More"),
+                    learnMoreBtn = $("<button/>").addClass("bg-[#0e2525] text-white rounded-xl px-2 py-1 w-fit mx-auto cursor-pointer").text("Learn More"),
                     hotelExtra = $("<div/>").addClass("extra "),
                     hotelPic = $("<img/>").addClass("rounded-xl size-64 mx-auto object-cover")
-                        .attr("alt", "hotel picture").attr("src", "https://d2s2rtcxxwjegp.cloudfront.net/images/hotels/hotel_placeholder.png");
+                        .attr("alt", "hotel picture").attr("src", "https://d2s2rtcxxwjegp.cloudfront.net/images/hotels/hotel_placeholder.png"),
+                    waster = makeWaste();
                 addressCont.append(staticAddress, hotelAddress, hotelPostal)
+                hotelExtra.append(waster)
                 container.append(hotelName, hotelPic, addressCont, hotelExtra, learnMoreBtn);
                 learnMoreBtn.click((e) => {
                     searchHotel(item.hotelId);
                 })
                 $(place).append(container);
+                if (reHistory.hotelSearch.search.includes(item.hotelId)) {
+                    hotelErrorBuilder(reHistory.hotelSearch.raw[reHistory.hotelSearch.search.indexOf(item.hotelId)], item.hotelId, true);
+                }
             })
-        }, 1000);
+        }, renderAgain ? 1000 : 0);
 
     }
-    function errorServiceBuilder(data) {
-        console.log(data);
-        const status = $("<p/>").text("Status: " + data.status).addClass("flex flex-col justify-center"), title = $("<h2/>").text(data.title).addClass("flex flex-col justify-center"),
-            code = $("<p/>").text("Code: " + data.code).addClass("flex flex-col justify-center");
-        $("#data-render").empty().append(status, title, code);
+    /**
+     * Renders a error message
+     * @param {Object} data 
+     * @param {Boolean} waitRender 
+     */
+    function errorServiceBuilder(data, renderAgain = false) {
+        if (renderAgain) {
+            $("#loader").removeClass("hidden")
+        }
+        setTimeout(() => {
+            const status = $("<p/>").text("Status: " + data.status).addClass("flex flex-col justify-center"),
+                title = $("<h2/>").text(data.title).addClass("flex flex-col justify-center"),
+                code = $("<p/>").text("Code: " + data.code).addClass("flex flex-col justify-center");
+            if (renderAgain) {
+                $("#loader").addClass("hidden")
+            }
+            $("#data-render").empty().append(status, title, code);
+        }, renderAgain ? 1000 : 0);
     }
-    function hotelExtraBuilder() {
+    function hotelExtraBuilder(data, place, renderAgain = false) {
+        $(`#${place}`).empty();
+        const description = $("p").text(data.data[0].offers.room.description.text);
+        $(`#${place}`).append(description);
+    }
+    function hotelErrorBuilder(error, place, renderAgain = false) {
+        $(`#${place} .extra`).empty();
+        const data = error.errors[0], waste = makeWaste();
+        if (renderAgain) {
+            waste.removeClass("hidden");
+            $(`#${place} .extra`).append(waste)
+        }
+        setTimeout(() => {
+            const status = $("<p/>").text("Status: " + data.status).addClass("font-semibold "),
+                title = $("<h2/>").text(data.title).addClass("text-lg font-bold"),
+                sourceParam = data.source && data.source.parameter ? data.source.parameter : "N/A";
+            const errorCard = $("<div/>").addClass("p-4 text-white").append(status, title);
+            if (renderAgain) {
+                $(`#${place} .extra`).empty();
+            }
+            $(`#${place} .extra`).append(errorCard);
+        }, renderAgain ? 1000 : 0);
 
     }
     /**
@@ -343,14 +445,19 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
 
         $(".des-cont").slideUp("linear");
     }
+    function makeWaste() {
+        return $("<div/>").addClass("waste-sec hidden flex items-center justify-center")
+            .append($("<div/>").addClass("loader border-t-[#0e2525] animate-spin ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"))
+    }
     async function searchHotel(hotel) {
         let hasCalled = false;
-        const url = `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${hotel}`;
+        const url = `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${hotel}`,
+            waste = $(`#${hotel} .extra .waste-sec`);
+        waste.removeClass("hidden")
         if (reHistory.tnks.length == 0) {
             reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
         }
         if (reHistory.hotelSearch.search.includes(hotel)) {
-            console.log("Dont't Fetch");
             return;
         }
         try {
@@ -368,27 +475,38 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
                 reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
                 searchHotel(hotel);
             }
+            if (data.hasOwnProperty("errors")) {
+                hotelErrorBuilder(data, hotel)
+            } else {
+                hotelExtraBuilder(data, hotel, false)
+            }
             reHistory.hotelSearch.raw.push(data);
             reHistory.hotelSearch.search.push(hotel);
-
             localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
-            console.log(data)
+            waste.addClass("hidden")
         } catch (error) {
             console.log(error);
         }
     }
     async function searchCity(city) {
-        console.log(city);
         let hasCalled = false;
-        const url = `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${city}`;
+        const url = `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${city}`,
+            regularCityName = cities.find((item) => item.cityCode.includes(city)).cityName;
+        $("#we-city").text(regularCityName)
+        const wDATA = await Z2V0Q2l0eVdlYXRoZXI(regularCityName);
+        reHistory.weather = wDATA;
+        console.log(reHistory)
+        weatherBuilder(reHistory.weather)
         if (reHistory.citySearch.search.includes(city)) {
-            console.log("Don't Fetch!!");
-            serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.findIndex((item) => item.includes(city))], "#data-render");
+            serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.findIndex((item) => item.includes(city))], "#data-render", true);
             return;
         }
+        console.log(cities.find((item) => item.cityCode.includes(city)).cityName)
         if (reHistory.tnks.length == 0) {
             reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
         }
+        const waster = $("#loader");
+        waster.removeClass("hidden");
         try {
             $("#data-render").empty()
             const res = await fetch(url, {
@@ -402,8 +520,8 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
             const data = await res.json();
             if (!data.hasOwnProperty("errors")) {
                 reHistory.citySearch.raw.push(data);
-                reHistory.citySearch.search.push(city)
-                serviceBuilder(data, "#data-render");
+                reHistory.citySearch.search.push(city);
+                serviceBuilder(data, "#data-render", false);
                 reHistory.lastCity = city;
             }
             else if (data.errors[0].status === 401 && !hasCalled) {
@@ -411,50 +529,48 @@ import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
                 reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
                 searchCity(city);
             } else {
-                errorServiceBuilder(data.errors[0]);
+                errorServiceBuilder(data.errors[0], false);
             }
+            waster.addClass("hidden")
             localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
-    } catch (error) {
-        console.log(error)
-    }
-    finally {
-        loader.classList.add('hidden');
-    }
+        } catch (error) {
+            console.log(error)
+        }
 
-}
+    }
     /**
      * This will excute when the document is fulley loaded
      */
     $(document).ready(() => {
-    // By default the Home page will be loaded first 
-    if (localStorage.getItem("lastPage") === null) {
-        localStorage.setItem("lastPage", "home");
-        switchPage("home");
-    } else {
-        setUpCities(() => {
-            isPopState = true;
-            switchPage(localStorage.getItem("lastPage"));
-            $(".link-btn").click((e) => switchPageClickEffect(e.target.getAttribute("routes")));
+        // By default the Home page will be loaded first 
+        if (localStorage.getItem("lastPage") === null) {
+            localStorage.setItem("lastPage", "home");
+            switchPage("home");
+        } else {
+            setUpCities(() => {
+                isPopState = true;
+                switchPage(localStorage.getItem("lastPage"));
+                $(".link-btn").click((e) => switchPageClickEffect(e.target.getAttribute("routes")));
+            })
+        }
+        if (localStorage.getItem("totalData")) {
+            reHistory = JSON.parse(atob(localStorage.getItem("totalData")));
+        }
+        $(".des-cont").hide();
+        $("#des-btn").click(() => {
+            $(".des-cont").slideToggle("linear");
         })
-    }
-    if (localStorage.getItem("totalData")) {
-        reHistory = JSON.parse(atob(localStorage.getItem("totalData")));
-    }
-    $(".des-cont").hide();
-    $("#des-btn").click(() => {
-        $(".des-cont").slideToggle("linear");
     })
-})
-$(window).on("popstate", function (event) {
-    let params = new URLSearchParams(window.location.search);
-    let cityName = params.get("city");
-    let path = window.location.pathname;
-    let page = path.split("/").pop().replace(".html", "");
-    isPopState = false;
-    if (page === "destinations" && cityName) {
-        switchPage("des-" + cityName);
-    } else {
-        switchPage(page);
-    }
-});
-}) ();
+    $(window).on("popstate", function (event) {
+        let params = new URLSearchParams(window.location.search);
+        let cityName = params.get("city");
+        let path = window.location.pathname;
+        let page = path.split("/").pop().replace(".html", "");
+        isPopState = false;
+        if (page === "destinations" && cityName) {
+            switchPage("des-" + cityName);
+        } else {
+            switchPage(page);
+        }
+    });
+})();

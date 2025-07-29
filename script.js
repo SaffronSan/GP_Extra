@@ -1,6 +1,16 @@
+import { Z2V0QWNjZXNzVG9rZW4 } from "./aGFuZGxlS0VZUw.js";
 (function () {
     const pagesData = [];
-    let cities = [], isPopState = false, packages = [];
+    let cities = [], isPopState = false, packages = [],
+        reHistory = {
+            "citySearch": {
+                "search": [], "raw": []
+            }, "hotelSearch": {
+                "search": [], "raw": []
+            },
+            "tnks": "",
+            "lastCity": ""
+        }
 
     /**
      * This function switches the page based on the provided page name.
@@ -66,7 +76,7 @@
                     attachLinkBtnHandlers();
                     pagesData.push({ [isPageDes ? "destinations" : page]: data });
                 },
-                error: function () {
+                error: () => {
                     $("main").text("Sorry! The Page did not load!");
                 }
             });
@@ -82,8 +92,7 @@
         let cityName = page.slice(4);
         const itemD = cities.find((val) => val.cityName.includes(cityName));
         if (itemD === undefined) {
-            let error = $("<h1>");
-            error.text("This destiniations does not exist!");
+            let error = $("<h1>").text("This destiniations does not exist!");
             $("main").html(error);
             throw new Error("City does not exist");
         }
@@ -104,6 +113,17 @@
         }
         if (page.includes("package")) {
             setUpPackages();
+        }
+        if (page.includes("hotel")) {
+            desLinkBuilder(cities, "#city-opts", false);
+            console.log(reHistory)
+            if (reHistory.citySearch.raw.length > 0) {
+                console.log(reHistory.citySearch.search.length-1);
+                serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.length-1], "#data-render");
+            }
+            $("#searchCity").click((e) => {
+                searchCity($("#city-opts").val());
+            })
         }
         isPopState = true;
         $("title").text(titleCase(page));
@@ -165,14 +185,21 @@
         desCardBuilder(cities.slice(index + 1, index + 4))
     }
     /**
-     * Creates the destinations buttons 
+     * Creates the destinations buttons sFERpj4GwyTtEpPAWh9lpsLwjv5T
      */
-    function desLinkBuilder(data, place) {
+    function desLinkBuilder(data, place, image = true) {
         data.forEach((item, index) => {
-            let container = $("<div/>").addClass(`flex items-center space-x-2 space-y-1 p-2 ${index + 1 === data.length ? "hover:rounded-b-xl" : "hover:rounded-none"}`),
+            let container = $(image ? "<div/>" : "<option/>").addClass(`flex items-center space-x-2 space-y-1 p-2 ${index + 1 === data.length ? "hover:rounded-b-xl" : "hover:rounded-none"}`),
                 img = $("<img/>").attr("src", item.cityBannerImg).addClass("rounded size-10 "),
                 btn = $("<h5/>").text(item.cityName).addClass("inline hover:cursor-pointer capitalize link-btn ").attr("routes", "des-" + item.cityName);
-            container.append(img, btn);
+            if (image) {
+                container.append(img);
+            }
+            if (!image) {
+                container.val(item.cityCode)
+                //console.log(container.val(item.cityCode)); 
+            }
+            container.append(btn);
             $(place).append(container);
         })
     }
@@ -190,31 +217,6 @@
             container.append(seal, cityName)
             $(".des-other").append(container);
         })
-    }
-    /**
-     * This fetches cities.json and performace a optional
-     * callback inside of the fetch
-     * @param {Function} callback 
-     */
-    function setUpCities(callback) {
-        $.getJSON("data/cities.json", (data) => {
-            cities = data.data;
-            desLinkBuilder(cities, ".des-cont");
-            desLinkBuilder(cities, "#foo-des-links");
-            if (callback) {
-                callback();
-            }
-        });
-    }
-    function setUpPackages() {
-        if (packages.length > 0) {
-            packageBuilder(packages);
-            return;
-        }
-        $.getJSON("../data/packages.json", (data) => {
-            packages = data.data;
-            packageBuilder(data.data);
-        });
     }
     function packageBuilder(packages) {
         packages.forEach((item) => {
@@ -252,6 +254,78 @@
         });
         attachLinkBtnHandlers();
     }
+    function serviceBuilder(data, place) {
+        const loader = document.getElementById('loader');
+        $(place).empty()
+        console.log(data)
+        if (data.hasOwnProperty("errors")) {
+            errorServiceBuilder(data.errors[0]);
+            return;
+        }
+        $("#loader").removeClass("hidden")
+        setTimeout(() => {
+            $("#loader").addClass("hidden")
+            data.data.forEach((item, index) => {
+                if (index >= 21) {
+                    return;
+                }
+                let staticAddress = $("<span/>").text("Address: "), addressCont = $("<p/>"),
+                    container = $("<div/>").addClass("flex flex-col space-y-2 justify-between text-center ").attr("id", item.hotelId),
+                    hotelName = $("<h3/>").addClass("lowercase first-letter:uppercase font-bold md:text-xl w-fit text-wrap mx-auto").text(item.name),
+                    hotelAddress = $("<span/>").addClass("lowercase first-letter:uppercase").text(item.address.lines[0]),
+                    hotelPostal = $("<p/>").text("Postal Code: " + item.address.postalCode).addClass(""),
+                    learnMoreBtn = $("<button/>").addClass("bg-[#0e2525] text-white rounded-xl px-2 py-1 w-fit mx-auto").text("Learn More"),
+                    hotelExtra = $("<div/>").addClass("extra "),
+                    hotelPic = $("<img/>").addClass("rounded-xl size-64 mx-auto object-cover")
+                        .attr("alt", "hotel picture").attr("src", "https://d2s2rtcxxwjegp.cloudfront.net/images/hotels/hotel_placeholder.png");
+                addressCont.append(staticAddress, hotelAddress, hotelPostal)
+                container.append(hotelName, hotelPic, addressCont, hotelExtra, learnMoreBtn);
+                learnMoreBtn.click((e) => {
+                    searchHotel(item.hotelId);
+                })
+                $(place).append(container);
+            })
+        }, 1000);
+
+    }
+    function errorServiceBuilder(data) {
+        console.log(data);
+        const status = $("<p/>").text("Status: " + data.status).addClass("flex flex-col justify-center"), title = $("<h2/>").text(data.title).addClass("flex flex-col justify-center"),
+            code = $("<p/>").text("Code: " + data.code).addClass("flex flex-col justify-center");
+        $("#data-render").empty().append(status, title, code);
+    }
+    function hotelExtraBuilder() {
+
+    }
+    /**
+     * This fetches cities.json and performace a optional
+     * callback inside of the fetch
+     * @param {Function} callback 
+     */
+    function setUpCities(callback) {
+        $.getJSON("data/cities.json", (data) => {
+            cities = data.data;
+            desLinkBuilder(cities, ".des-cont");
+            desLinkBuilder(cities, "#foo-des-links");
+            if (callback) {
+                callback();
+            }
+        });
+    }
+    /**
+     * fetches packages data and renders them
+     * @returns void
+     */
+    function setUpPackages() {
+        if (packages.length > 0) {
+            packageBuilder(packages);
+            return;
+        }
+        $.getJSON("../data/packages.json", (data) => {
+            packages = data.data;
+            packageBuilder(data.data);
+        });
+    }
     /**
      * This handles click effect for switching pages, also hides the
      * destinations container and scrolls to the top if not at top
@@ -269,36 +343,118 @@
 
         $(".des-cont").slideUp("linear");
     }
+    async function searchHotel(hotel) {
+        let hasCalled = false;
+        const url = `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${hotel}`;
+        if (reHistory.tnks.length == 0) {
+            reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
+        }
+        if (reHistory.hotelSearch.search.includes(hotel)) {
+            console.log("Dont't Fetch");
+            return;
+        }
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${reHistory.tnks}`
+                },
+                mode: "cors",
+                cath: "default"
+            })
+            const data = await response.json();
+            if (data.errors[0].status === 401 && !hasCalled) {
+                hasCalled = true;
+                reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
+                searchHotel(hotel);
+            }
+            reHistory.hotelSearch.raw.push(data);
+            reHistory.hotelSearch.search.push(hotel);
+
+            localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
+            console.log(data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function searchCity(city) {
+        console.log(city);
+        let hasCalled = false;
+        const url = `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${city}`;
+        if (reHistory.citySearch.search.includes(city)) {
+            console.log("Don't Fetch!!");
+            serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.findIndex((item) => item.includes(city))], "#data-render");
+            return;
+        }
+        if (reHistory.tnks.length == 0) {
+            reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
+        }
+        try {
+            $("#data-render").empty()
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${reHistory.tnks}`
+                },
+                mode: "cors",
+                cath: "default"
+            })
+            const data = await res.json();
+            if (!data.hasOwnProperty("errors")) {
+                reHistory.citySearch.raw.push(data);
+                reHistory.citySearch.search.push(city)
+                serviceBuilder(data, "#data-render");
+                reHistory.lastCity = city;
+            }
+            else if (data.errors[0].status === 401 && !hasCalled) {
+                hasCalled = true;
+                reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
+                searchCity(city);
+            } else {
+                errorServiceBuilder(data.errors[0]);
+            }
+            localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
+    } catch (error) {
+        console.log(error)
+    }
+    finally {
+        loader.classList.add('hidden');
+    }
+
+}
     /**
      * This will excute when the document is fulley loaded
      */
     $(document).ready(() => {
-        // By default the Home page will be loaded first 
-        if (localStorage.getItem("lastPage") === null) {
-            localStorage.setItem("lastPage", "home");
-            switchPage("home");
-        } else {
-            setUpCities(() => {
-                isPopState = true;
-                switchPage(localStorage.getItem("lastPage"));
-                $(".link-btn").click((e) => switchPageClickEffect(e.target.getAttribute("routes")));
-            })
-        }
-        $(".des-cont").hide();
-        $("#des-btn").click(() => {
-            $(".des-cont").slideToggle("linear");
+    // By default the Home page will be loaded first 
+    if (localStorage.getItem("lastPage") === null) {
+        localStorage.setItem("lastPage", "home");
+        switchPage("home");
+    } else {
+        setUpCities(() => {
+            isPopState = true;
+            switchPage(localStorage.getItem("lastPage"));
+            $(".link-btn").click((e) => switchPageClickEffect(e.target.getAttribute("routes")));
         })
+    }
+    if (localStorage.getItem("totalData")) {
+        reHistory = JSON.parse(atob(localStorage.getItem("totalData")));
+    }
+    $(".des-cont").hide();
+    $("#des-btn").click(() => {
+        $(".des-cont").slideToggle("linear");
     })
-    $(window).on("popstate", function (event) {
-        let params = new URLSearchParams(window.location.search);
-        let cityName = params.get("city");
-        let path = window.location.pathname;
-        let page = path.split("/").pop().replace(".html", "");
-        isPopState = false;
-        if (page === "destinations" && cityName) {
-            switchPage("des-" + cityName);
-        } else {
-            switchPage(page);
-        }
-    });
-})();
+})
+$(window).on("popstate", function (event) {
+    let params = new URLSearchParams(window.location.search);
+    let cityName = params.get("city");
+    let path = window.location.pathname;
+    let page = path.split("/").pop().replace(".html", "");
+    isPopState = false;
+    if (page === "destinations" && cityName) {
+        switchPage("des-" + cityName);
+    } else {
+        switchPage(page);
+    }
+});
+}) ();

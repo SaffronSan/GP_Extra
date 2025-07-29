@@ -15,7 +15,7 @@
     </style>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,15 +25,16 @@
 </head>
 
 <body>
-  <nav class="flex w-full justify-between bg-primary shadow-sm shadow-zinc-400 relative">
+  <nav class="flex w-full justify-between bg-primary shadow-sm relative">
     <div class="size-10 md:size-25">
-      <img src="/img/LogoW.png" alt="logo">
+      <img src="./img/LogoW.png" alt="logo">
     </div>
     <div
       class=" text-sm md:text-lg px-2 *:transition-all *:delay-50 *:ease-in lg:text-2xl lg:*:px-5 *:hover:cursor-pointer *:hover:bg-accent *:h-full text-white">
       <button class="link-btn" routes="home">Home</button>
       <button class="link-btn" routes="contact">Contact</button>
       <button class="link-btn" routes="package">Package</button>
+      <button class="link-btn" routes="hotel">Hotel</button>
       <button id="des-btn">Destination</button>
     </div>
     <div class="absolute text-white bg-primary shadow-sm shadow-primary flex flex-col w-[14rem] right-0 top-10 lg:top-25 des-cont z-1 
@@ -41,7 +42,7 @@
       <h4 class="text-center p-2 sticky top-0 z-1 bg-[rgba(14,37,37)]">Top Cities</h4>
     </div>
   </nav>
-  <main>
+  <main class="">
 
   </main>
   <footer
@@ -63,45 +64,45 @@
       <h3 class="uppercase text-base xl:text-lg font-semibold mb-2 tracking-wide opacity-80">Social Media</h3>
       <div class=" w-full md:inline items-center gap-4">
         <h3 class="text-sm xl:text-base font-semibold mb-4">Connect on LinkedIn</h3>
-          <a href="https://www.linkedin.com/in/david-aguirre-santos-compsci/" rel="noopener noreferrer" target="blank"
-            aria-label="LinkedIn (Red)" class="tooltip">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-              viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
-              <path fill="currentColor"
-                d="M8.625 6C7.728 6 7 6.728 7 7.625v8.75C7 17.273 7.728 18 8.625 18h2.5a5.375 5.375 0 0 0 5.375-5.375v-1.25A5.375 5.375 0 0 0 11.125 6zM9 16V8h2.125a3.375 3.375 0 0 1 3.375 3.375v1.25A3.375 3.375 0 0 1 11.125 16z" />
-            </svg>
-            <span class="tooltiptext">David</span>
-          </a>
+        <a href="https://www.linkedin.com/in/david-aguirre-santos-compsci/" rel="noopener noreferrer" target="blank"
+          aria-label="LinkedIn (Red)" class="tooltip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+            viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
+            <path fill="currentColor"
+              d="M8.625 6C7.728 6 7 6.728 7 7.625v8.75C7 17.273 7.728 18 8.625 18h2.5a5.375 5.375 0 0 0 5.375-5.375v-1.25A5.375 5.375 0 0 0 11.125 6zM9 16V8h2.125a3.375 3.375 0 0 1 3.375 3.375v1.25A3.375 3.375 0 0 1 11.125 16z" />
+          </svg>
+          <span class="tooltiptext">David</span>
+        </a>
 
-          <a href="https://www.linkedin.com/in/anish-thapa-097a21236/" rel="noopener noreferrer" target="blank"
-            aria-label="LinkedIn (Blue)" class="tooltip">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-              viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
-              <path fill="currentColor"
-                d="M11.75 6a1 1 0 0 0-.936.649l-3.75 10a1 1 0 1 0 1.872.702l1.007-2.684h3.614l1.007 2.684a1 1 0 0 0 1.872-.702l-3.75-10A1 1 0 0 0 11.75 6m0 3.848l1.057 2.819h-2.114z" />
-            </svg>
-            <span class="tooltiptext">Anish</span>
-          </a>
+        <a href="https://www.linkedin.com/in/anish-thapa-097a21236/" rel="noopener noreferrer" target="blank"
+          aria-label="LinkedIn (Blue)" class="tooltip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+            viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
+            <path fill="currentColor"
+              d="M11.75 6a1 1 0 0 0-.936.649l-3.75 10a1 1 0 1 0 1.872.702l1.007-2.684h3.614l1.007 2.684a1 1 0 0 0 1.872-.702l-3.75-10A1 1 0 0 0 11.75 6m0 3.848l1.057 2.819h-2.114z" />
+          </svg>
+          <span class="tooltiptext">Anish</span>
+        </a>
 
-          <a href="https://www.linkedin.com/in/cameron-curtis-704cc/" rel="noopener noreferrer" target="blank"
-            aria-label="LinkedIn (Purple)" class="tooltip">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-              viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
-              <path fill="currentColor"
-                d="M10.5 6A3.5 3.5 0 0 0 7 9.5v5a3.5 3.5 0 0 0 3.5 3.5h2.813a3.19 3.19 0 0 0 3.187-3.187V14.5a1 1 0 1 0-2 0v.313c0 .655-.532 1.187-1.187 1.187H10.5A1.5 1.5 0 0 1 9 14.5v-5A1.5 1.5 0 0 1 10.5 8h2.813c.655 0 1.187.532 1.187 1.188V9.5a1 1 0 1 0 2 0v-.312A3.19 3.19 0 0 0 13.313 6z" />
-            </svg>
-            <span class="tooltiptext">Cameron</span>
-          </a>
+        <a href="https://www.linkedin.com/in/cameron-curtis-704cc/" rel="noopener noreferrer" target="blank"
+          aria-label="LinkedIn (Purple)" class="tooltip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+            viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
+            <path fill="currentColor"
+              d="M10.5 6A3.5 3.5 0 0 0 7 9.5v5a3.5 3.5 0 0 0 3.5 3.5h2.813a3.19 3.19 0 0 0 3.187-3.187V14.5a1 1 0 1 0-2 0v.313c0 .655-.532 1.187-1.187 1.187H10.5A1.5 1.5 0 0 1 9 14.5v-5A1.5 1.5 0 0 1 10.5 8h2.813c.655 0 1.187.532 1.187 1.188V9.5a1 1 0 1 0 2 0v-.312A3.19 3.19 0 0 0 13.313 6z" />
+          </svg>
+          <span class="tooltiptext">Cameron</span>
+        </a>
 
-          <a href="http://www.linkedin.com/in/kodjoegloh" rel="noopener noreferrer" target="blank"
-            aria-label="LinkedIn (Green)" class="tooltip">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-              viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
-              <path fill="currentColor"
-                d="M15.997 6.336a1 1 0 0 0-1.411-.083L10 10.329V7a1 1 0 0 0-2 0v10a1 1 0 1 0 2 0v-3.329l4.586 4.076a1 1 0 0 0 1.328-1.494L11.13 12l4.784-4.253a1 1 0 0 0 .083-1.411" />
-            </svg>
-            <span class="tooltiptext">Kodjo</span>
-          </a>
+        <a href="http://www.linkedin.com/in/kodjoegloh" rel="noopener noreferrer" target="blank"
+          aria-label="LinkedIn (Green)" class="tooltip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+            viewBox="0 0 24 24"><!-- Icon from Myna UI Icons by Praveen Juge - https://github.com/praveenjuge/mynaui-icons/blob/main/LICENSE -->
+            <path fill="currentColor"
+              d="M15.997 6.336a1 1 0 0 0-1.411-.083L10 10.329V7a1 1 0 0 0-2 0v10a1 1 0 1 0 2 0v-3.329l4.586 4.076a1 1 0 0 0 1.328-1.494L11.13 12l4.784-4.253a1 1 0 0 0 .083-1.411" />
+          </svg>
+          <span class="tooltiptext">Kodjo</span>
+        </a>
         <div class="mt-auto flex flex-col">
           <h3 class="text-sm xl:text-base font-semibold mb-2">GitHub Repo</h3>
           <a href="https://github.com/CACurts910/GP" rel="noopener noreferrer" target="_blank" aria-label="GitHub"

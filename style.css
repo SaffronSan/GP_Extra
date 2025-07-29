@@ -1,39 +1,45 @@
-body{
-    background-color:#fafafa;
-    padding: 0rem;
-    margin: 0rem;
-    font-family: "Montserrat", sans-serif;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+body {
+  background-color: #fafafa;
+  padding: 0rem;
+  margin: 0rem;
+  font-family: "Montserrat", sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-main{
+
+main {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-@media screen and (min-width: 1300px) and (max-width:1440px){
-    #S2{
-        padding: 380px;
-    }
-    #S2P{
-        font-size: 30px;
-    }
+@media screen and (min-width: 1300px) and (max-width:1440px) {
+  #S2 {
+    padding: 380px;
+  }
 
-    #S4MI{
-        left: 200px;
-    }
+  #S2P {
+    font-size: 30px;
+  }
+
+  #S4MI {
+    left: 200px;
+  }
 }
 
 .contact-form {
-  position: relative; /* Avoid absolute/fixed unless needed */
+  position: relative;
+  /* Avoid absolute/fixed unless needed */
 }
+
 .tooltip {
   position: relative;
   display: inline-block;
 }
 
-.tooltip .tooltiptext{
+.tooltip .tooltiptext {
   visibility: hidden;
   width: 5rem;
   background-color: black;
@@ -48,14 +54,17 @@ main{
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-.tooltiptext{
-    display: none;
+
+.tooltiptext {
+  display: none;
 }
+
 @media (min-width: 768px) {
   .tooltiptext {
     display: inline;
   }
 }
+
 /* scroll wheel code*/
 /* width */
 ::-webkit-scrollbar {
@@ -66,14 +75,14 @@ main{
 ::-webkit-scrollbar-track {
   border-radius: 10px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgba(14,37,37,0.9); 
+  background: rgba(14, 37, 37, 0.9);
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background:  black; 
+  background: black;
 }

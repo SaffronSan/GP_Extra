@@ -1,0 +1,16 @@
+<section class=" bg-[#0e2525]/80 text-white flex-grow">
+    <div class="p-5 xl:p-20">
+        <div
+            class="md:mx-auto w-full xl:w-3/5 bg-[#0e2525] flex justify-around border-2 shadow-sm border-primary rounded-full p-1">
+            <select class="" id="city-opts"></select>
+            <button class="cursor-pointer border-1 text-white rounded-xl px-2" id="searchCity">Search</button>
+        </div>
+    </div>
+    <div id="loader" class="hidden flex items-center justify-center">
+        <div class="loader border-t-[#0e2525] animate-spin ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+    </div>
+    <div class="grid grid-cols-1 p-2 md:grid-cols-2 xl:grid-cols-3 mx-5 mt-2 text-white *:rounded-xl *:bg-primary/50 text-center *:shadow-sm *:p-2 gap-5"
+        id="data-render">
+    </div>
+</section>
+<script src="/routerHandle.js"></script>

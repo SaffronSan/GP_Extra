@@ -122,8 +122,8 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
                 serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.length - 1], "#data-render", true);
                 $("#we-city").text(cities.find((item) => item.cityCode.includes(reHistory.lastCity)).cityName)
             }
-            if (reHistory.weather) {
-                weatherBuilder(reHistory.weather)
+            if (Object.keys(reHistory.weather).length > 0) {
+                weatherBuilder(reHistory.weather);
             }
             $("#searchCity").click((e) => {
                 searchCity($("#city-opts").val());
@@ -194,7 +194,7 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
     function desLinkBuilder(data, place, image = true) {
         data.forEach((item, index) => {
             let container = $(image ? "<div/>" : "<option/>").addClass(`flex items-center space-x-2 space-y-1 p-2 ${index + 1 === data.length ? "hover:rounded-b-xl" : "hover:rounded-none"}`),
-                img = $("<img/>").attr("src", item.cityBannerImg).addClass("rounded size-10 "),
+                img = $("<img/>").attr("src", item.cityBannerImg).addClass("rounded size-10 ").attr("alt", item.cityName),
                 btn = $("<h5/>").text(item.cityName).addClass("inline hover:cursor-pointer capitalize link-btn ").attr("routes", "des-" + item.cityName);
             if (image) {
                 container.append(img);
@@ -221,6 +221,10 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
             $(".des-other").append(container);
         })
     }
+    /**
+     * Builds Packes Containers
+     * @param {Object} packages 
+     */
     function packageBuilder(packages) {
         packages.forEach((item) => {
             let container = $("<div/>").addClass("bg-white rounded-xl p-3 shadow-sm border-gray-200 h-full flex flex-col justify-between items-center"),
@@ -257,53 +261,43 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
         });
         attachLinkBtnHandlers();
     }
+    /**
+     * Builds Weather Container
+     * @param {Object} weather 
+     */
     function weatherBuilder(weather) {
         $("#weather-render").empty();
-        // Create main card container
+        if(Object.keys(weather).length === 0){
+            return;
+        }
+        reHistory.weather = weather;
+        $("#weather-cont").removeClass("hidden");
+        localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
         const card = $("<div/>")
-            .addClass("max-w-sm mx-auto bg-primary/70 rounded-xl shadow-md overflow-hidden p-4");
-
-        // Weather icon
-        const iconUrl = weather.condition && weather.condition.icon
-            ? `https:${weather.condition.icon}`
-            : "";
+            .addClass("mx-4 my-2 flex flex-col md:space-x-4 md:flex-row items-center bg-primary/70 rounded-xl shadow-sm overflow-hidden p-4");
+        const iconUrl = weather.condition && weather.condition.icon ? `https:${weather.condition.icon}` : "";
         const icon = $("<img/>")
             .attr("src", iconUrl)
             .attr("alt", "Weather Icon")
             .addClass("w-16 h-16 mx-auto");
-
-
-        // Temperature
         const tempC = weather.temp_f !== undefined ? weather.temp_c : "N/A";
         const temperature = $("<p/>")
             .text(`Temperature: ${tempC}°C`)
-            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
-
-        // Condition text
+            .addClass("xl:text-lg xl:p-2 text-xl font-medium text-center");
         const conditionText = weather.condition && weather.condition.text ? weather.condition.text : "N/A";
         const condition = $("<p/>")
             .text(`Condition: ${conditionText}`)
-            .addClass("xl:text-2xl xl:p-2  text-xl font-black text-center");
-
-        // Wind info
+            .addClass("xl:text-lg xl:p-2  text-xl font-medium text-center");
         const wind = weather.wind_kph !== undefined ? weather.wind_kph + " kph" : "N/A";
         const windDir = weather.wind_dir || "";
         const windInfo = $("<p/>")
             .text(`Wind: ${wind} ${windDir}`)
-            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
-
-        // Humidity
+            .addClass("xl:text-lg xl:p-2 text-xl font-medium text-center");
         const humidity = weather.humidity !== undefined ? weather.humidity + "%" : "N/A";
         const humidityEl = $("<p/>")
             .text(`Humidity: ${humidity}`)
-            .addClass("xl:text-2xl xl:p-2 text-xl font-black text-center");
-
-        // Additional info can be added similarly...
-
-        // Assemble the card
+            .addClass("xl:text-lg xl:p-2 text-xl font-medium text-center");
         card.append(icon, location, temperature, condition, windInfo, humidityEl);
-
-        // Append to container
         localStorage.setItem("totalData", btoa(JSON.stringify(reHistory)))
         $("#weather-render").append(card);
     }
@@ -312,7 +306,7 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
      * @param {Object} data 
      * @param {String} place 
      * @param {Boolean} renderAgain 
-     * @returns 
+     * @returns void
      */
     function serviceBuilder(data, place, renderAgain = false) {
         const loader = document.getElementById('loader');
@@ -337,7 +331,7 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
                     hotelName = $("<h3/>").addClass("lowercase first-letter:uppercase font-bold md:text-xl w-fit text-wrap mx-auto").text(item.name),
                     hotelAddress = $("<span/>").addClass("lowercase first-letter:uppercase").text(item.address.lines[0]),
                     hotelPostal = $("<p/>").text("Postal Code: " + item.address.postalCode).addClass(""),
-                    learnMoreBtn = $("<button/>").addClass("bg-[#0e2525] text-white rounded-xl px-2 py-1 w-fit mx-auto cursor-pointer").text("Learn More"),
+                    learnMoreBtn = $("<button/>").addClass("cursor-pointer border-1 border-secondary text-white w-fit mx-auto rounded-xl px-4 hover:bg-secondary hover:text-primary").text("Learn More"),
                     hotelExtra = $("<div/>").addClass("extra "),
                     hotelPic = $("<img/>").addClass("rounded-xl size-64 mx-auto object-cover")
                         .attr("alt", "hotel picture").attr("src", "https://d2s2rtcxxwjegp.cloudfront.net/images/hotels/hotel_placeholder.png"),
@@ -375,11 +369,23 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
             $("#data-render").empty().append(status, title, code);
         }, renderAgain ? 1000 : 0);
     }
+    /**
+     * Builds extra Hotels info and adds to the Hotels container 
+     * @param {Object} data 
+     * @param {String} place 
+     * @param {Boolean} renderAgain 
+     */
     function hotelExtraBuilder(data, place, renderAgain = false) {
         $(`#${place}`).empty();
         const description = $("p").text(data.data[0].offers.room.description.text);
         $(`#${place}`).append(description);
     }
+    /**
+     * Builds error messages info and adds to the Hotels container 
+     * @param {Object} error 
+     * @param {String} place 
+     * @param {Boolean} renderAgain 
+     */
     function hotelErrorBuilder(error, place, renderAgain = false) {
         $(`#${place} .extra`).empty();
         const data = error.errors[0], waste = makeWaste();
@@ -449,6 +455,11 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
         return $("<div/>").addClass("waste-sec hidden flex items-center justify-center")
             .append($("<div/>").addClass("loader border-t-[#0e2525] animate-spin ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"))
     }
+    /**
+     * Fetches Hotels details 
+     * @param {String} hotel 
+     * @returns 
+     */
     async function searchHotel(hotel) {
         let hasCalled = false;
         const url = `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${hotel}`,
@@ -487,7 +498,11 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
         } catch (error) {
             console.log(error);
         }
-    }
+    }/**
+     * Fetches hotels by Citites 
+     * @param {String} city 
+     * @returns void
+     */
     async function searchCity(city) {
         let hasCalled = false;
         const url = `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${city}`,
@@ -495,13 +510,13 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
         $("#we-city").text(regularCityName)
         const wDATA = await Z2V0Q2l0eVdlYXRoZXI(regularCityName);
         reHistory.weather = wDATA;
-        console.log(reHistory)
         weatherBuilder(reHistory.weather)
+        $("#weather-cont").removeClass("hidden")
         if (reHistory.citySearch.search.includes(city)) {
+            reHistory.lastCity = city;
             serviceBuilder(reHistory.citySearch.raw[reHistory.citySearch.search.findIndex((item) => item.includes(city))], "#data-render", true);
             return;
         }
-        console.log(cities.find((item) => item.cityCode.includes(city)).cityName)
         if (reHistory.tnks.length == 0) {
             reHistory.tnks = await Z2V0QWNjZXNzVG9rZW4();
         }
@@ -521,8 +536,8 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
             if (!data.hasOwnProperty("errors")) {
                 reHistory.citySearch.raw.push(data);
                 reHistory.citySearch.search.push(city);
-                serviceBuilder(data, "#data-render", false);
                 reHistory.lastCity = city;
+                serviceBuilder(data, "#data-render", false);
             }
             else if (data.errors[0].status === 401 && !hasCalled) {
                 hasCalled = true;
@@ -561,6 +576,9 @@ import { Z2V0QWNjZXNzVG9rZW4, Z2V0Q2l0eVdlYXRoZXI } from "./aGFuZGxlS0VZUw.js";
             $(".des-cont").slideToggle("linear");
         })
     })
+    /**
+     * Handles Backs & Forward Navgiations
+     */
     $(window).on("popstate", function (event) {
         let params = new URLSearchParams(window.location.search);
         let cityName = params.get("city");

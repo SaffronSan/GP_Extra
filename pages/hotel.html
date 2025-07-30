@@ -1,20 +1,25 @@
-<section class=" bg-[#0e2525]/80 text-white flex-grow">
+<section class=" bg-[#0e2525]/80 text-white flex-grow flex flex-col">
     <div class="p-5 xl:p-20 text-center">
-        <h1 class="xl:text-3xl xl:p-5 :py-5 text-xl font-black">Find Hotels in our Cities</h1>
-        <div class="md:mx-auto w-full xl:w-3/5 bg-[#0e2525] flex justify-around border-2 shadow-sm border-primary rounded-full p-2">
-            <select class="" id="city-opts"></select>
-            <button class="cursor-pointer border-1 text-white rounded-xl px-2 hover:bg-white hover:text-primary" id="searchCity">Search</button>
+        <h1 class="xl:text-3xl text-xl font-black">Find Hotels in our Cities</h1>
+        <p class="text-xs font-light italic inline-block m-0">*Most of our Hotels are Booked out!!</p>
+        <div
+            class="md:mx-auto mt-2  w-full xl:w-3/5 bg-[#0e2525] flex justify-around border-2 shadow-sm border-primary rounded-full p-2">
+            <select class="bg-primary/50 w-1/2 border-b-2 border-secondary text-white text-sm block p-2.5" id="city-opts"></select>
+            <button class="cursor-pointer border-1 border-secondary text-white rounded-xl px-4 hover:bg-secondary hover:text-primary"
+                id="searchCity">Search</button>
         </div>
     </div>
-    <div id="loader" class="hidden flex items-center justify-center">
-        <div class="loader border-t-[#0e2525] animate-spin ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+    <div id="loader" class="hidden flex flex-grow items-center justify-center">
+        <div
+            class="loader border-t-[#0e2525] animate-spin ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16">
+        </div>
     </div>
     <div class="grid grid-cols-1 p-2 md:grid-cols-2 xl:grid-cols-3 mx-5 mt-2 text-white *:rounded-xl *:bg-primary/50 text-center *:shadow-sm *:p-2 gap-5"
         id="data-render">
     </div>
-    <div class="xl:text-3xl xl:p-5 :py-5 text-xl font-black text-center" id="weather-cont">
-        <h2 class="my-2">The weather in <span id="we-city"></span> is!</h2>
-        <div class="" id="weather-render">
+    <div class="w-full hidden" id="weather-cont">
+        <h2 class="my-2 xl:text-2xl xl:p-5 :py-5 text-xl font-black text-center">The weather in <span id="we-city"></span> is!</h2>
+        <div class="w-full" id="weather-render">
 
         </div>
     </div>
